@@ -131,11 +131,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DepDistContraction.cpp" />
+    <ClCompile Include="Dependency.cpp" />
     <ClCompile Include="GeneralAlgorithms.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Network.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DepDistContraction.h" />
+    <ClInclude Include="Dependency.h" />
     <ClInclude Include="GeneralAlgorithms.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="resource.h" />

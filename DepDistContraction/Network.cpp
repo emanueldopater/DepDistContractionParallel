@@ -6,7 +6,8 @@ Network::Network()
 	this->number_of_nodes = 0;
 	this->number_of_edges = 0;
 	this->keys = new vector<int>();
-
+	this->intern_node_id_mapping = map<int, int>();
+	this->reverse_intern_node_id_mapping = map<int, int>();
 }
 
 Network::~Network()
@@ -17,8 +18,7 @@ Network::~Network()
 void Network::load_edge_list(string filename,bool has_weights)
 {
 	// measure time of execution
-
-
+	int intern_node_id = 0;
 	ifstream file(filename);
 	string line;
 	int src;
@@ -32,19 +32,64 @@ void Network::load_edge_list(string filename,bool has_weights)
 		istringstream iss(line);
 		if (has_weights)
 		{
-			iss >> src >> tar >> weight;
+			string src_str, tar_str;
+			getline(iss, src_str, ';');
+			getline(iss, tar_str, ';');
+			iss >> weight;
+			src = stoi(src_str);
+			tar = stoi(tar_str);
 		}
 		else
 		{
-			iss >> src >> tar;
+			string src_str, tar_str;
+			getline(iss, src_str, ';');
+			getline(iss, tar_str, ';');
+			src = stoi(src_str);
+			tar = stoi(tar_str);
 		}
-		
+
+
+		// node intern id mapping 
+		//cout << "Loaded src, tar, weight:" << src << ", " << tar << ", " << weight << endl;
+
+		//src
+		if (this->intern_node_id_mapping.find(src) == this->intern_node_id_mapping.end())
+		{
+			this->intern_node_id_mapping[src] = intern_node_id;
+			src = intern_node_id;
+			this->reverse_intern_node_id_mapping[intern_node_id] = src;
+			intern_node_id++;
+
+		}
+		else
+		{
+			src = this->intern_node_id_mapping[src];
+		}
+
+		////tar
+		if (this->intern_node_id_mapping.find(tar) == this->intern_node_id_mapping.end())
+		{
+			this->intern_node_id_mapping[tar] = intern_node_id;
+			tar = intern_node_id;
+			this->reverse_intern_node_id_mapping[intern_node_id] = tar;
+			intern_node_id++;
+		}
+		else
+		{
+			tar = this->intern_node_id_mapping[tar];
+		}
+
+		//cout << "Transformed src, tar, weight:" << src << ", " << tar << ", " << weight << endl;
+		//cout << endl;
+
+		/// end of node intern id mapping
+
+
+
 		if (this->dok.find(src) == this->dok.end())
 		{
 			this->dok[src] = map<int, double>();
-
 			this->number_of_nodes++;
-
 		}
 
 		if (this->dok.find(tar) == this->dok.end())
@@ -86,6 +131,18 @@ void Network::print_neighbours(int node)
 		cout << x.first << " ";
 	}
 	cout << endl;
+}
+
+vector<int> Network::neighbours_list(int node)
+{
+	vector<int> neighbours;
+
+	for (auto const& x : this->dok[node])
+	{
+		neighbours.push_back(x.first);
+	}
+
+	return neighbours;
 }
 
 void Network::prin_dok()
@@ -188,5 +245,21 @@ void Network::compute_keys()
 	for (auto const& x : this->dok)
 	{
 		this->keys->push_back(x.first);
+	}
+}
+
+void Network::print_intern_mapping()
+{
+
+	for (auto const& x : this->intern_node_id_mapping)
+	{
+		cout << x.first << ": " << x.second << endl;
+	}
+
+	// reverse mapping 
+	cout << "Reverse mapping:" << endl;
+	for (auto const& x : this->reverse_intern_node_id_mapping)
+	{
+		cout << x.first << ": " << x.second << endl;
 	}
 }
