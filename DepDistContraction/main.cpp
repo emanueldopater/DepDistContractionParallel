@@ -86,4 +86,24 @@ int main()
 	netscience_ddc->export_gdf("output_embs/netscience_embs.gdf");
 	condmat_ddc->export_gdf("output_embs/condmat_embs.gdf");
 
+	delete karate_network;
+	delete lesmis_network;
+	delete football_network;
+	delete netscience_network;
+	delete condmat_network;
+
+	delete karate_dependency;
+	delete lesmis_dependency;
+	delete football_dependency;
+	delete netscience_dependency;
+	delete condmat_dependency;
+
+	delete karate_ddc;
+	delete lesmis_ddc;
+	delete football_ddc;
+	delete netscience_ddc;
+	delete condmat_ddc;
+
+	return 0;
+
 }
