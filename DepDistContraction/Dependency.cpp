@@ -23,7 +23,6 @@ double Dependency::calculate_dependency_lazy(int x, int y)
 	{
 		this->dependency_dok[x] = map<int, double>();
 	}
-	//this->dependency_dok[x][y] = 0.0;
 
 	double weight_xy = 0.0;
 	if (this->network_dok->at(x).find(y) != this->network_dok->at(x).end())
@@ -38,8 +37,6 @@ double Dependency::calculate_dependency_lazy(int x, int y)
 	for (auto v_i : common_neighbours)
 	{
 		double weight_xvi = this->network_dok->at(x).at(v_i);
-
-		// compute r
 		double weight_viy = this->network_dok->at(v_i).at(y);
 
 		double r = weight_viy / (weight_xvi + weight_viy);
