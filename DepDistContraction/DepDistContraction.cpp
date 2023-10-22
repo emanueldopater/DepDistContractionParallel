@@ -90,7 +90,6 @@ void DepDistContraction::iteration()
 		#pragma omp for
 		for (int X = 0; X < this->network->get_number_of_nodes(); X++)
 		{
-			//cout << X << endl;
 			int Y = this->choose_node(X);
 
 			double* M = new double[this->embedding_dim];
@@ -115,23 +114,17 @@ void DepDistContraction::iteration()
 				M1[m] = M[m] / norm_M;
 			}
 
-			//cout << norm_M << endl;
-
 			double D_x_y = this->dependency->calculate_dependency_lazy(X, Y);
 			double D_y_x = this->dependency->calculate_dependency_lazy(Y, X);
-			//cout << "Dependency: " << X << "on  " << Y << " and reverse: " << endl;
-			//cout << "D_x_y, D_y_x: " << D_x_y << "," << D_y_x <<  endl;
 			double q = pow(D_x_y, 2) * D_y_x;
 
 			double depDist = (1.0 - q) * this->maxDepDist;
 			double accDist = (1.0 - q) * this->maxAccDist;
 			double accCoef = 0.5 + 0.5 * norm_M / accDist;
-			//cout << "Embedding index: " << endl;
 
 			for (int m = 0; m < this->embedding_dim; m++)
 			{
 				int emb_index = (this->embedding_dim * X) + m;
-				//cout << emb_index << endl;
 				this->embedding_next_state[emb_index] =
 					this->embedding_current_state[emb_index] + pow(q, 1.0 / accCoef) * (norm_M - depDist) * M1[m];
 			}
