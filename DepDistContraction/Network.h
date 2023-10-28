@@ -15,6 +15,7 @@ public:
 	Network();
 	~Network();
 	void load_edge_list(string filename, bool has_weights);
+	void load_node_labels(string filename);
 
 	void print_edge_list();
 	void print_neighbours(int node);
@@ -37,11 +38,13 @@ public:
 	void print_intern_mapping();
 
 	map<int, int>* get_reverse_mapping() { return &this->reverse_intern_node_id_mapping;  }
+	map<int, int> * get_node_labels() { return &this->node_labels; }
 
 protected:
 	map<int, map<int,double> > dok;
 	map<int, int> intern_node_id_mapping;
 	map<int, int> reverse_intern_node_id_mapping;
+	map<int, int> node_labels;
 	int number_of_nodes;
 	int number_of_edges;
 	vector<int>* keys;
