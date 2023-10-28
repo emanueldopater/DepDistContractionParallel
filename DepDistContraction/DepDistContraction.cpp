@@ -75,6 +75,41 @@ void DepDistContraction::export_gdf(string filename)
 	gdf_gile.close();
 }
 
+void DepDistContraction::export_gdf_node_labels(string filename)
+{
+	ofstream gdf_gile;
+	gdf_gile.open(filename);
+
+	auto reverse_mapping = this->network->get_reverse_mapping();
+	auto node_labels = this->network->get_node_labels();
+
+	gdf_gile << "nodedef>name VARCHAR, class INTEGER,x DOUBLE,y DOUBLE" << endl;
+
+	// write nodes
+	for (int i = 0; i < this->network->get_number_of_nodes(); i++)
+	{
+		//get reverse mapping of node 
+		gdf_gile << reverse_mapping->at(i);
+		gdf_gile << "," << node_labels->at(reverse_mapping->at(i));
+		for (int j = 0; j < this->embedding_dim; j++)
+		{
+			gdf_gile << "," << this->embedding_current_state[i * this->embedding_dim + j];
+		}
+		gdf_gile << endl;
+	}
+	// write edges
+	gdf_gile << "edgedef> node1,node2,weight DOUBLE, directed BOOLEAN" << endl;
+
+	for (auto const& x : *(this->network->get_dok()))
+	{
+		for (auto const& y : x.second)
+		{
+			gdf_gile << reverse_mapping->at(x.first) << "," << reverse_mapping->at(y.first) << "," << y.second << ",false" << endl;
+		}
+	}
+	gdf_gile.close();
+}
+
 DepDistContraction::~DepDistContraction()
 {
 	delete [] this->embedding_current_state;

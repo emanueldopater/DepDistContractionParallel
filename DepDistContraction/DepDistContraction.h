@@ -17,6 +17,7 @@ public:
 
 	void run(int iterations);
 	void export_gdf(string filename);
+	void export_gdf_node_labels(string filename);
 
 	~DepDistContraction();
 private:
