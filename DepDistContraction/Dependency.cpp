@@ -5,6 +5,7 @@ Dependency::Dependency(Network* net)
 	this->network = net;
 	this->dependency_dok = map<int, map<int, double>>();
 	this->network_dok = net->get_dok();
+	this->sum_N_dok = map<int, double>();
 }
 
 double Dependency::calculate_dependency_lazy(int x, int y)
@@ -34,6 +35,7 @@ double Dependency::calculate_dependency_lazy(int x, int y)
 	double sum_CN = 0.0;
 
 	sum_CN += weight_xy;
+
 	for (auto v_i : common_neighbours)
 	{
 		double weight_xvi = this->network_dok->at(x).at(v_i);
@@ -45,17 +47,46 @@ double Dependency::calculate_dependency_lazy(int x, int y)
 	}
 
 	auto N_x = this->network_dok->at(x);
+	auto N_y = this->network_dok->at(y);
 
-	double sum_N = 0.0;
+	double sum_Nx = 0.0;
+	double sum_Ny = 0.0;
 
-	for (auto v_j = N_x.begin(); v_j != N_x.end(); ++v_j)
+	// neigbours of x
+	if (this->sum_N_dok.find(x) != this->sum_N_dok.end())
 	{
-		sum_N += v_j->second;
+		sum_Nx = this->sum_N_dok[x];
+	}
+	else
+	{
+		for (auto v_j = N_x.begin(); v_j != N_x.end(); ++v_j)
+		{
+			sum_Nx += v_j->second;
+		}
+		this->sum_N_dok[x] = sum_Nx;
 	}
 
-	double D_xy = (sum_CN / sum_N);
+	// neigbours of y
+	if (this->sum_N_dok.find(y) != this->sum_N_dok.end())
+	{
+		sum_Ny = this->sum_N_dok[y];
+	}
+	else
+	{
+		for (auto v_j = N_y.begin(); v_j != N_y.end(); ++v_j)
+		{
+			sum_Ny += v_j->second;
+		}
+		this->sum_N_dok[y] = sum_Ny;
+	}
+
+	double D_xy = (sum_CN / sum_Nx);
+	double D_yx = (sum_CN / sum_Ny);
 
 	this->dependency_dok[x][y] = D_xy;
+
+	// compute also the dependency for y to x
+	this->dependency_dok[y][x] = D_yx;
 
 	return D_xy;
 

@@ -10,6 +10,7 @@ public:
 	map<int, map<int, double>> calculate_dependy_whole_net();
 private:
 	map<int, map<int, double>> dependency_dok;
+	map<int, double> sum_N_dok;
 	const map<int, map<int, double>> *  network_dok;
 
 	Network * network;
