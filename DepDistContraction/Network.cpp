@@ -8,6 +8,7 @@ Network::Network()
 	this->keys = new vector<int>();
 	this->intern_node_id_mapping = map<int, int>();
 	this->reverse_intern_node_id_mapping = map<int, int>();
+	this->node_labels = map<int, int>();
 }
 
 Network::~Network()
@@ -56,8 +57,8 @@ void Network::load_edge_list(string filename,bool has_weights)
 		if (this->intern_node_id_mapping.find(src) == this->intern_node_id_mapping.end())
 		{
 			this->intern_node_id_mapping[src] = intern_node_id;
-			src = intern_node_id;
 			this->reverse_intern_node_id_mapping[intern_node_id] = src;
+			src = intern_node_id;
 			intern_node_id++;
 
 		}
@@ -70,8 +71,8 @@ void Network::load_edge_list(string filename,bool has_weights)
 		if (this->intern_node_id_mapping.find(tar) == this->intern_node_id_mapping.end())
 		{
 			this->intern_node_id_mapping[tar] = intern_node_id;
-			tar = intern_node_id;
 			this->reverse_intern_node_id_mapping[intern_node_id] = tar;
+			tar = intern_node_id;
 			intern_node_id++;
 		}
 		else
@@ -107,6 +108,27 @@ void Network::load_edge_list(string filename,bool has_weights)
 	for (auto const& x : this->dok)
 	{
 		this->keys->push_back(x.first);
+	}
+}
+
+void Network::load_node_labels(string filename)
+{
+	ifstream file(filename);
+	string line;
+	int node;
+	int label;
+
+	while (getline(file, line))
+	{
+		istringstream iss(line);
+
+		string node_str, label_str;
+		getline(iss, node_str, ';');
+		iss >> label_str;
+		node = stoi(node_str);
+		label = stoi(label_str);
+		
+		this->node_labels[node] = label;
 	}
 }
 
