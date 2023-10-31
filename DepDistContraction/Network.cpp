@@ -33,20 +33,16 @@ void Network::load_edge_list(string filename,bool has_weights)
 		istringstream iss(line);
 		if (has_weights)
 		{
-			string src_str, tar_str;
-			getline(iss, src_str, ';');
-			getline(iss, tar_str, ';');
+
+			iss >> src;
+			iss >> tar;
 			iss >> weight;
-			src = stoi(src_str);
-			tar = stoi(tar_str);
+
 		}
 		else
 		{
-			string src_str, tar_str;
-			getline(iss, src_str, ';');
-			getline(iss, tar_str, ';');
-			src = stoi(src_str);
-			tar = stoi(tar_str);
+			iss >> src;
+			iss >> tar;
 		}
 
 
@@ -122,11 +118,9 @@ void Network::load_node_labels(string filename)
 	{
 		istringstream iss(line);
 
-		string node_str, label_str;
-		getline(iss, node_str, ';');
-		iss >> label_str;
-		node = stoi(node_str);
-		label = stoi(label_str);
+		iss >> node;
+		iss >> label;
+
 		
 		this->node_labels[node] = label;
 	}
