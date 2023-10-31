@@ -21,12 +21,37 @@ DepDistContraction::DepDistContraction(
 	// fill embedding_current_state with random values
 	mt19937 rng(random_device{}());
 	// Create a uniform real distribution to generate numbers between 0 and 1
-	uniform_real_distribution<double> dist(0.0, 1.0);
+
+	//double base_std = 1.0 / this->network->get_number_of_nodes();
+
+	auto net_dok = this->network->get_dok();
+
+	int current_node_index = 0;
+	int emb_dim_counter = 0;
+	for (int i = 0; i < embedding_array_size; i++)
+	{
+		// The mean is in 0.5, and standard deviation is base_std * number of neighbours.
+		// nodes with higher degree have higher chance of not being in center. 
+
+		//normal_distribution<double> dist_normal(0.5, base_std * net_dok->at(current_node_index).size());
+		normal_distribution<double> dist_normal(0.5, 1 - 1 /( 1 + net_dok->at(current_node_index).size()) );
+
+		this->embedding_current_state[i] = dist_normal(rng);
+		emb_dim_counter++;
+
+		if (emb_dim_counter == embedding_dim)
+		{
+			emb_dim_counter = 0;
+			current_node_index++;
+		}
+	}
+
+	/*uniform_real_distribution<double> dist(0.0, 1.0);
 
 	for (int i = 0; i < embedding_array_size; i++)
 	{
 		this->embedding_current_state[i] = dist(rng);
-	}
+	}*/
 
 }
 
@@ -108,6 +133,26 @@ void DepDistContraction::export_gdf_node_labels(string filename)
 		}
 	}
 	gdf_gile.close();
+}
+
+void DepDistContraction::export_embs_for_CGE(string filename)
+{
+	ofstream embs_file;
+	embs_file.open(filename);
+
+	auto reverse_mapping = this->network->get_reverse_mapping();
+
+	for (int i = 0; i < this->network->get_number_of_nodes(); i++)
+	{
+		embs_file << reverse_mapping->at(i);
+		for (int j = 0; j < this->embedding_dim; j++)
+		{
+			embs_file << " " << this->embedding_current_state[i * this->embedding_dim + j];
+		}
+		embs_file << endl;
+	}
+
+	embs_file.close();
 }
 
 DepDistContraction::~DepDistContraction()
