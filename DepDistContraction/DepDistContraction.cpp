@@ -24,34 +24,34 @@ DepDistContraction::DepDistContraction(
 
 	//double base_std = 1.0 / this->network->get_number_of_nodes();
 
-	auto net_dok = this->network->get_dok();
+	//auto net_dok = this->network->get_dok();
 
-	int current_node_index = 0;
-	int emb_dim_counter = 0;
-	for (int i = 0; i < embedding_array_size; i++)
-	{
-		// The mean is in 0.5, and standard deviation is base_std * number of neighbours.
-		// nodes with higher degree have higher chance of not being in center. 
+	//int current_node_index = 0;
+	//int emb_dim_counter = 0;
+	//for (int i = 0; i < embedding_array_size; i++)
+	//{
+	//	// The mean is in 0.5, and standard deviation is base_std * number of neighbours.
+	//	// nodes with higher degree have higher chance of not being in center. 
 
-		//normal_distribution<double> dist_normal(0.5, base_std * net_dok->at(current_node_index).size());
-		normal_distribution<double> dist_normal(0.5, 1 - 1 /( 1 + net_dok->at(current_node_index).size()) );
+	//	//normal_distribution<double> dist_normal(0.5, base_std * net_dok->at(current_node_index).size());
+	//	normal_distribution<double> dist_normal(0.5, 1 - 1 /( 1 + net_dok->at(current_node_index).size()) );
 
-		this->embedding_current_state[i] = dist_normal(rng);
-		emb_dim_counter++;
+	//	this->embedding_current_state[i] = dist_normal(rng);
+	//	emb_dim_counter++;
 
-		if (emb_dim_counter == embedding_dim)
-		{
-			emb_dim_counter = 0;
-			current_node_index++;
-		}
-	}
+	//	if (emb_dim_counter == embedding_dim)
+	//	{
+	//		emb_dim_counter = 0;
+	//		current_node_index++;
+	//	}
+	//}
 
-	/*uniform_real_distribution<double> dist(0.0, 1.0);
+	uniform_real_distribution<double> dist(0.0, 1.0);
 
 	for (int i = 0; i < embedding_array_size; i++)
 	{
 		this->embedding_current_state[i] = dist(rng);
-	}*/
+	}
 
 }
 
