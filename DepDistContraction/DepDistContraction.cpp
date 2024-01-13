@@ -171,6 +171,10 @@ void DepDistContraction::iteration()
 		for (int X = 0; X < this->network->get_number_of_nodes(); X++)
 		{
 			int Y = this->choose_node(X);
+			if (Y == -1)
+			{
+				continue;
+			}
 
 			double* M = new double[this->embedding_dim];
 
@@ -220,6 +224,15 @@ void DepDistContraction::iteration()
 int DepDistContraction::choose_node(int X)
 {
 	vector<int> all_neighs = this->network->neighbours_list(X);
+	if (all_neighs.size() == 0)
+	{
+		return -1;
+	}
+	if (all_neighs.size() == 1)
+	{
+		return all_neighs[0];
+	}
+
 	double neighProp = 1.0 - 1.0 / (1 + all_neighs.size());
 
 	mt19937 rng(random_device{}());
@@ -243,6 +256,10 @@ int DepDistContraction::choose_node(int X)
 	//remove from neighs_of_neigh the node X
 
 	neighs_of_neigh.erase(remove(neighs_of_neigh.begin(), neighs_of_neigh.end(), X), neighs_of_neigh.end());
+	if (neighs_of_neigh.size() == 0)
+	{
+		return selected_neigh;
+	}
 
 	// loop through all_neighs
 	for (auto neigh : all_neighs)
