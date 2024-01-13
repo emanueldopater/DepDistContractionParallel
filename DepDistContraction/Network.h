@@ -37,13 +37,15 @@ public:
 
 	void print_intern_mapping();
 
-	map<int, int>* get_reverse_mapping() { return &this->reverse_intern_node_id_mapping;  }
+	map<int, string>* get_reverse_mapping() { return &this->reverse_intern_node_id_mapping;  }
 	map<int, int> * get_node_labels() { return &this->node_labels; }
+
+	void export_mapping(string filename);
 
 protected:
 	map<int, map<int,double> > dok;
-	map<int, int> intern_node_id_mapping;
-	map<int, int> reverse_intern_node_id_mapping;
+	map<string, int> intern_node_id_mapping;
+	map<int, string> reverse_intern_node_id_mapping;
 	map<int, int> node_labels;
 	int number_of_nodes;
 	int number_of_edges;

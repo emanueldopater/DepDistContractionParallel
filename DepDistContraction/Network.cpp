@@ -6,8 +6,8 @@ Network::Network()
 	this->number_of_nodes = 0;
 	this->number_of_edges = 0;
 	this->keys = new vector<int>();
-	this->intern_node_id_mapping = map<int, int>();
-	this->reverse_intern_node_id_mapping = map<int, int>();
+	this->intern_node_id_mapping = map<string, int>();
+	this->reverse_intern_node_id_mapping = map<int, string>();
 	this->node_labels = map<int, int>();
 }
 
@@ -22,13 +22,12 @@ void Network::load_edge_list(string filename,bool has_weights)
 	int intern_node_id = 0;
 	ifstream file(filename);
 	string line;
-	int src;
-	int tar;
+	string src;
+	string tar;
 	double weight = 1.0;
 
 	while (getline(file, line))
 	{
-		this->number_of_edges++;
 
 		istringstream iss(line);
 		if (has_weights)
@@ -45,22 +44,29 @@ void Network::load_edge_list(string filename,bool has_weights)
 			iss >> tar;
 		}
 
+		// if src and tar are the same, skip
+		if (src == tar)
+		{
+			continue;
+		}
 
 		// node intern id mapping 
 		//cout << "Loaded src, tar, weight:" << src << ", " << tar << ", " << weight << endl;
 
 		//src
+
+		int src_int, tar_int;
 		if (this->intern_node_id_mapping.find(src) == this->intern_node_id_mapping.end())
 		{
 			this->intern_node_id_mapping[src] = intern_node_id;
 			this->reverse_intern_node_id_mapping[intern_node_id] = src;
-			src = intern_node_id;
+			src_int = intern_node_id;
 			intern_node_id++;
 
 		}
 		else
 		{
-			src = this->intern_node_id_mapping[src];
+			src_int = this->intern_node_id_mapping[src];
 		}
 
 		////tar
@@ -68,12 +74,12 @@ void Network::load_edge_list(string filename,bool has_weights)
 		{
 			this->intern_node_id_mapping[tar] = intern_node_id;
 			this->reverse_intern_node_id_mapping[intern_node_id] = tar;
-			tar = intern_node_id;
+			tar_int = intern_node_id;
 			intern_node_id++;
 		}
 		else
 		{
-			tar = this->intern_node_id_mapping[tar];
+			tar_int = this->intern_node_id_mapping[tar];
 		}
 
 		//cout << "Transformed src, tar, weight:" << src << ", " << tar << ", " << weight << endl;
@@ -82,21 +88,23 @@ void Network::load_edge_list(string filename,bool has_weights)
 		/// end of node intern id mapping
 
 
-
-		if (this->dok.find(src) == this->dok.end())
+		if (this->dok.find(src_int) == this->dok.end())
 		{
-			this->dok[src] = map<int, double>();
+			this->dok[src_int] = map<int, double>();
 			this->number_of_nodes++;
 		}
 
-		if (this->dok.find(tar) == this->dok.end())
+		if (this->dok.find(tar_int) == this->dok.end())
 		{
-			this->dok[tar] = map<int, double>();
+			this->dok[tar_int] = map<int, double>();
 			this->number_of_nodes++;
 		}
 
-		this->dok[src][tar] = weight;
-		this->dok[tar][src] = weight;
+		this->number_of_edges++;
+
+
+		this->dok[src_int][tar_int] = weight;
+		this->dok[tar_int][src_int] = weight;
 	}
 
 
@@ -279,3 +287,17 @@ void Network::print_intern_mapping()
 		cout << x.first << ": " << x.second << endl;
 	}
 }
+
+void Network::export_mapping(string filename)
+{
+	ofstream mapping_file;
+	mapping_file.open(filename);
+
+	for (auto const& x : this->intern_node_id_mapping)
+	{
+		mapping_file << x.first << " " << x.second << endl;
+	}
+
+	mapping_file.close();
+}
+
