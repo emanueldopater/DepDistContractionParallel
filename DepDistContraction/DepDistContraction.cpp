@@ -24,34 +24,54 @@ DepDistContraction::DepDistContraction(
 
 	//double base_std = 1.0 / this->network->get_number_of_nodes();
 
-	//auto net_dok = this->network->get_dok();
+	auto net_dok = this->network->get_dok();
 
-	//int current_node_index = 0;
-	//int emb_dim_counter = 0;
-	//for (int i = 0; i < embedding_array_size; i++)
-	//{
-	//	// The mean is in 0.5, and standard deviation is base_std * number of neighbours.
-	//	// nodes with higher degree have higher chance of not being in center. 
-
-	//	//normal_distribution<double> dist_normal(0.5, base_std * net_dok->at(current_node_index).size());
-	//	normal_distribution<double> dist_normal(0.5, 1 - 1 /( 1 + net_dok->at(current_node_index).size()) );
-
-	//	this->embedding_current_state[i] = dist_normal(rng);
-	//	emb_dim_counter++;
-
-	//	if (emb_dim_counter == embedding_dim)
-	//	{
-	//		emb_dim_counter = 0;
-	//		current_node_index++;
-	//	}
-	//}
-
-	uniform_real_distribution<double> dist(0.0, 1.0);
-
+	int current_node_index = 0;
+	int emb_dim_counter = 0;
 	for (int i = 0; i < embedding_array_size; i++)
 	{
-		this->embedding_current_state[i] = dist(rng);
+		// The mean is in 0.5, and standard deviation is base_std * number of neighbours.
+		// nodes with higher degree have higher chance of not being in center. 
+
+		//normal_distribution<double> dist_normal(0.5, base_std * net_dok->at(current_node_index).size());
+		uniform_real_distribution<double> dist(0.0, 1.0);
+
+		double rand_num = dist(rng);
+		int node_degree = net_dok->at(current_node_index).size();
+		// random_emb = std::log(1 + random_emb) / std::log(2 + base);
+		// // check if random_emb is nan or inf
+		// if (std::isnan(random_emb) || std::isinf(random_emb))
+		// {
+		// 	cout << "random_emb is nan or inf" << endl;
+		// }
+
+		// if (rand_num < 0.5)
+		// {
+		// 	random_emb = 1 - random_emb;
+		// }
+		//cout << "random_emb: " << random_emb << endl;
+
+		double random_emb = std::pow(rand_num, (1.0/20.0)) * std::pow(0.95, node_degree);
+		// in 1/2 chance it will change sign 
+		if (rand_num < 0.5)
+			random_emb *= -1;
+
+		this->embedding_current_state[i] = random_emb;
+		emb_dim_counter++;
+
+		if (emb_dim_counter == embedding_dim)
+		{
+			emb_dim_counter = 0;
+			current_node_index++;
+		}
 	}
+
+	// uniform_real_distribution<double> dist(0.0, 1.0);
+
+	// for (int i = 0; i < embedding_array_size; i++)
+	// {
+	// 	this->embedding_current_state[i] = dist(rng);
+	// }
 
 }
 
@@ -144,7 +164,7 @@ void DepDistContraction::export_embs_for_CGE(string filename)
 
 	for (int i = 0; i < this->network->get_number_of_nodes(); i++)
 	{
-		embs_file << i;
+		embs_file << i + 1;
 		for (int j = 0; j < this->embedding_dim; j++)
 		{
 			embs_file << " " << this->embedding_current_state[i * this->embedding_dim + j];
@@ -163,20 +183,24 @@ DepDistContraction::~DepDistContraction()
 
 void DepDistContraction::iteration()
 {
-	omp_set_dynamic(1);
-
 	#pragma omp parallel
 	{
+
 		#pragma omp for
 		for (int X = 0; X < this->network->get_number_of_nodes(); X++)
 		{
+			double* M = new double[this->embedding_dim];
+			double* M1 = new double[this->embedding_dim];
+
 			int Y = this->choose_node(X);
+
 			if (Y == -1)
 			{
-				continue;
+				cout << "Y is -1. " << endl;
+                delete[] M;
+                delete[] M1;
+                continue;
 			}
-
-			double* M = new double[this->embedding_dim];
 
 			for (int m = 0; m < this->embedding_dim; m++)
 			{
@@ -192,9 +216,6 @@ void DepDistContraction::iteration()
 			}
 			norm_M = sqrt(norm_M);
 
-			// check if norm_M is nan 
-
-			double* M1 = new double[this->embedding_dim];
 			for (int m = 0; m < this->embedding_dim; m++)
 			{
 				M1[m] = M[m] / norm_M;
@@ -207,7 +228,8 @@ void DepDistContraction::iteration()
 			double depDist = (1.0 - q) * this->maxDepDist;
 			double accDist = (1.0 - q) * this->maxAccDist;
 			double accCoef = 0.5 + 0.5 * norm_M / accDist;
-
+			mt19937 rng(random_device{}());
+			uniform_real_distribution<double> dist(0.0, 1.0);
 			for (int m = 0; m < this->embedding_dim; m++)
 			{
 				int emb_index = (this->embedding_dim * X) + m;
@@ -215,9 +237,13 @@ void DepDistContraction::iteration()
 					this->embedding_current_state[emb_index] + pow(q, 1.0 / accCoef) * (norm_M - depDist) * M1[m];
 			}
 
+			//cout << "Before deleting M and M1" << endl;
 			delete[] M;
 			delete[] M1;
+			//cout << "After deleting M and M1" << endl;
+
 		}
+
 	}	
 }
 
@@ -283,6 +309,31 @@ int DepDistContraction::choose_node(int X)
 	{
 		return selected_neigh;
 	}
+}
 
+bool DepDistContraction::check_whether_to_stop()
+{
+	for (int current_dim = 0; current_dim < this->embedding_dim; current_dim++)
+	{
+		double min_value = 999.0;
+		double max_value = -1.0;
+
+		for (int emb_idx = 0; emb_idx < this->network->get_number_of_nodes(); emb_idx++)
+		{
+			double current_emb = this->embedding_current_state[emb_idx * this->embedding_dim + current_dim];
+
+			if (current_emb > max_value)
+				max_value = current_emb;
+			
+			if (current_emb < min_value)
+				min_value = current_emb;
+		}
+
+		// find the difference
+		if ( std::abs(max_value - min_value) > this->maxDepDist)
+			return false;
+	}
+
+	return true;
 
 }

@@ -25,6 +25,7 @@ public:
 private:
 	void iteration();
 	int choose_node(int X);
+	bool check_whether_to_stop();
 	Network * network;
 	Dependency * dependency;
 	int embedding_dim;
