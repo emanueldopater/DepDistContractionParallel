@@ -20,9 +20,13 @@ double Dependency::calculate_dependency_lazy(int x, int y)
 
 		// create the dependency for node1
 	}
-	if (this->dependency_dok.find(x) == this->dependency_dok.end())
+
+	#pragma omp critical
 	{
-		this->dependency_dok[x] = map<int, double>();
+		if (this->dependency_dok.find(x) == this->dependency_dok.end())
+		{
+			this->dependency_dok[x] = map<int, double>();
+		}
 	}
 
 	double weight_xy = 0.0;
@@ -63,7 +67,10 @@ double Dependency::calculate_dependency_lazy(int x, int y)
 		{
 			sum_Nx += v_j->second;
 		}
-		this->sum_N_dok[x] = sum_Nx;
+		#pragma omp critical
+		{
+			this->sum_N_dok[x] = sum_Nx;
+		}
 	}
 
 	// neigbours of y
@@ -77,17 +84,20 @@ double Dependency::calculate_dependency_lazy(int x, int y)
 		{
 			sum_Ny += v_j->second;
 		}
-		this->sum_N_dok[y] = sum_Ny;
+		#pragma omp critical
+		{
+			this->sum_N_dok[y] = sum_Ny;
+		}
 	}
 
 	double D_xy = (sum_CN / sum_Nx);
 	double D_yx = (sum_CN / sum_Ny);
 
-	this->dependency_dok[x][y] = D_xy;
-
-	// compute also the dependency for y to x
-	this->dependency_dok[y][x] = D_yx;
-
+	#pragma omp critical
+	{
+		this->dependency_dok[x][y] = D_xy;
+		this->dependency_dok[y][x] = D_yx;
+	}
 	return D_xy;
 
 }
