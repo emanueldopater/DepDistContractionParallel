@@ -367,3 +367,6 @@ DepDistContraction/output_embs
 DepDistContraction/output_embs
 DepDistContraction/embs_for_cge
 DepDistContraction/results
+
+.DS_Store
+articles/
