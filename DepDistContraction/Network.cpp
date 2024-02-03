@@ -18,7 +18,6 @@ Network::~Network()
 
 void Network::load_edge_list(string filename,bool has_weights)
 {
-	// measure time of execution
 	int intern_node_id = 0;
 	ifstream file(filename);
 	string line;
@@ -295,7 +294,7 @@ void Network::export_mapping(string filename)
 
 	for (auto const& x : this->intern_node_id_mapping)
 	{
-		mapping_file << x.first << " " << x.second << endl;
+		mapping_file << x.first << " " << x.second + 1 << endl;
 	}
 
 	mapping_file.close();
