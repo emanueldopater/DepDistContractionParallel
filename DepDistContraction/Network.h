@@ -11,7 +11,7 @@ using namespace std;
 class Network
 {
 public:
-	Network();
+	Network(string name);
 	~Network();
 	void load_edge_list(string filename, bool has_weights);
 	void load_node_labels(string filename);
@@ -40,6 +40,8 @@ public:
 	map<int, int> * get_node_labels() { return &this->node_labels; }
 
 	void export_mapping(string filename);
+	int get_super_node_id() { return super_node_id; }
+	string get_netwotk_name() { return this->name; }
 
 protected:
 	map<int, map<int,double> > dok;
@@ -49,5 +51,7 @@ protected:
 	int number_of_nodes;
 	int number_of_edges;
 	vector<int>* keys;
+	int super_node_id;
+	string name;
 };
 

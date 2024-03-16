@@ -370,3 +370,8 @@ DepDistContraction/results
 
 .DS_Store
 articles/
+
+main
+env/
+node2vec/
+verse-master

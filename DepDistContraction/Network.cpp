@@ -1,6 +1,6 @@
 #include "Network.h"
 
-Network::Network()
+Network::Network(string name)
 {
 	this->dok = map<int, map<int, double> >();
 	this->number_of_nodes = 0;
@@ -9,6 +9,9 @@ Network::Network()
 	this->intern_node_id_mapping = map<string, int>();
 	this->reverse_intern_node_id_mapping = map<int, string>();
 	this->node_labels = map<int, int>();
+	this->name = name;
+	this->super_node_id = 99999;
+
 }
 
 Network::~Network()
@@ -25,9 +28,11 @@ void Network::load_edge_list(string filename,bool has_weights)
 	string tar;
 	double weight = 1.0;
 
+	this->dok[super_node_id] = map<int, double>();
+
 	while (getline(file, line))
 	{
-
+		
 		istringstream iss(line);
 		if (has_weights)
 		{
@@ -91,12 +96,19 @@ void Network::load_edge_list(string filename,bool has_weights)
 		{
 			this->dok[src_int] = map<int, double>();
 			this->number_of_nodes++;
+
+			this->dok[super_node_id][src_int] = 0.1;
+			this->dok[src_int][super_node_id] = 0.1;
 		}
 
 		if (this->dok.find(tar_int) == this->dok.end())
 		{
 			this->dok[tar_int] = map<int, double>();
 			this->number_of_nodes++;
+
+
+			this->dok[super_node_id][tar_int] = 0.1;
+			this->dok[tar_int][super_node_id] = 0.1;
 		}
 
 		this->number_of_edges++;
@@ -104,8 +116,9 @@ void Network::load_edge_list(string filename,bool has_weights)
 
 		this->dok[src_int][tar_int] = weight;
 		this->dok[tar_int][src_int] = weight;
-	}
 
+
+	}
 
 	// generate keys 
 	for (auto const& x : this->dok)
