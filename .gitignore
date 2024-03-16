@@ -373,5 +373,6 @@ articles/
 
 main
 env/
-node2vec/
 verse-master
+DepDistContraction/node2vec/results/
+DepDistContraction/node2vec/results_deepwalk/

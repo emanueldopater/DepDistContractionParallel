@@ -51,12 +51,11 @@ void Network::load_edge_list(string filename,bool has_weights)
 		// if src and tar are the same, skip
 		if (src == tar)
 		{
+
+			cout << "src and tar are the same" << endl;
+			cout << src << " " << tar << endl;
 			continue;
 		}
-
-		// node intern id mapping 
-		//cout << "Loaded src, tar, weight:" << src << ", " << tar << ", " << weight << endl;
-
 		//src
 
 		int src_int, tar_int;
@@ -86,11 +85,6 @@ void Network::load_edge_list(string filename,bool has_weights)
 			tar_int = this->intern_node_id_mapping[tar];
 		}
 
-		//cout << "Transformed src, tar, weight:" << src << ", " << tar << ", " << weight << endl;
-		//cout << endl;
-
-		/// end of node intern id mapping
-
 
 		if (this->dok.find(src_int) == this->dok.end())
 		{
@@ -112,13 +106,12 @@ void Network::load_edge_list(string filename,bool has_weights)
 		}
 
 		this->number_of_edges++;
-
-
 		this->dok[src_int][tar_int] = weight;
 		this->dok[tar_int][src_int] = weight;
-
-
 	}
+
+	cout << "Number of nodes: " << this->dok.size() - 1  << endl;
+	cout << "Number of edges: " << this->number_of_edges << endl;
 
 	// generate keys 
 	for (auto const& x : this->dok)

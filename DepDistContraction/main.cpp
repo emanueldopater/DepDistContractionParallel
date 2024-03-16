@@ -21,38 +21,36 @@ int main()
 	Network * ca_hepth_network = new Network("ca_hepth");
 	Network * facebook_combined_network = new Network("facebook_combined");
 	Network * p2p_gnutella08_network = new Network("p2p_gnutella08");
-	Network * lastfm_asia_network = new Network("p2p_gnutella09");
+	Network * lastfm_asia_network = new Network("lastfm_asia");
 
 
 	// ddc networks
 
 
-	mouse_network->load_edge_list("nets_from_article/mouse_brain.csv", false);
-	airports_network->load_edge_list("nets_from_article/airports.csv", false);
-	//github_network->load_edge_list("nets_from_article/github.csv", false);
-	emails_network->load_edge_list("nets_from_article/emails.csv", false);
+	// mouse_network->load_edge_list("nets_from_article/mouse_brain.csv", false);
+	// airports_network->load_edge_list("nets_from_article/airports.csv", false);
+	// //github_network->load_edge_list("nets_from_article/github.csv", false);
+	// emails_network->load_edge_list("nets_from_article/emails.csv", false);
 
-	ca_grqc_network->load_edge_list("DDC_Networks/ca-GrQc.csv", false);
-	ca_hepth_network->load_edge_list("DDC_Networks/ca-HepTh.csv", false);
-	facebook_combined_network->load_edge_list("DDC_Networks/facebook_combined.csv", false);
-	p2p_gnutella08_network->load_edge_list("DDC_Networks/p2p-Gnutella08.csv", false);
-	lastfm_asia_network->load_edge_list("DDC_Networks/lastfm_asia.csv", false);
+	ca_grqc_network->load_edge_list("DDC_Networks/ca_grqc.csv", false);
+	ca_hepth_network->load_edge_list("DDC_Networks/ca_hepth.csv", false);
+	// facebook_combined_network->load_edge_list("DDC_Networks/facebook_combined.csv", false);
+	// p2p_gnutella08_network->load_edge_list("DDC_Networks/p2p_gnutella08.csv", false);
+	// lastfm_asia_network->load_edge_list("DDC_Networks/lastfm_asia.csv", false);
 
 
 
 	// export mapping 
-	mouse_network->export_mapping("results/nodes_mapping/mouse_brain_mapping.csv");
-	airports_network->export_mapping("results/nodes_mapping/airports_mapping.csv");
-	//github_network->export_mapping("results/nodes_mapping/github_mapping.csv");
-	emails_network->export_mapping("results/nodes_mapping/emails_mapping.csv");
+	// mouse_network->export_mapping("results/nodes_mapping/mouse_brain_mapping.csv");
+	// airports_network->export_mapping("results/nodes_mapping/airports_mapping.csv");
+	// //github_network->export_mapping("results/nodes_mapping/github_mapping.csv");
+	// emails_network->export_mapping("results/nodes_mapping/emails_mapping.csv");
 
 	ca_grqc_network->export_mapping("results/nodes_mapping/ca_grqc_mapping.csv");
 	ca_hepth_network->export_mapping("results/nodes_mapping/ca_hepth_mapping.csv");
-	facebook_combined_network->export_mapping("results/nodes_mapping/facebook_combined_mapping.csv");
-	p2p_gnutella08_network->export_mapping("results/nodes_mapping/p2p_gnutella08_mapping.csv");
-	lastfm_asia_network->export_mapping("results/nodes_mapping/lastfm_asia_mapping.csv");
-
-
+	// facebook_combined_network->export_mapping("results/nodes_mapping/facebook_combined_mapping.csv");
+	// p2p_gnutella08_network->export_mapping("results/nodes_mapping/p2p_gnutella08_mapping.csv");
+	// lastfm_asia_network->export_mapping("results/nodes_mapping/lastfm_asia_mapping.csv");
 
 	Dependency* mouse_dependency = new Dependency(mouse_network);
 	Dependency* airports_dependency = new Dependency(airports_network);
@@ -61,9 +59,9 @@ int main()
 
 	Dependency* ca_grqc_dependency = new Dependency(ca_grqc_network);
 	Dependency* ca_hepth_dependency = new Dependency(ca_hepth_network);
-	Dependency* facebook_combined_dependency = new Dependency(facebook_combined_network);
-	Dependency* p2p_gnutella08_dependency = new Dependency(p2p_gnutella08_network);
-	Dependency* lastfm_asia_dependency = new Dependency(lastfm_asia_network);
+	// Dependency* facebook_combined_dependency = new Dependency(facebook_combined_network);
+	// Dependency* p2p_gnutella08_dependency = new Dependency(p2p_gnutella08_network);
+	// Dependency* lastfm_asia_dependency = new Dependency(lastfm_asia_network);
 
 
 	vector<int> emb_dims = { 4, 8, 16, 32, 64, 128 };
@@ -100,22 +98,20 @@ int main()
 		std::__fs::filesystem::create_directory("results/ca_hepth/dim_" + to_string(emb_dims[i]) + embs_path);
 		std::__fs::filesystem::create_directory("results/ca_hepth/dim_" + to_string(emb_dims[i]) + result_path);
 
-		std::__fs::filesystem::create_directory("results/facebook_combined/");
-		std::__fs::filesystem::create_directory("results/facebook_combined/dim_" + to_string(emb_dims[i]));
-		std::__fs::filesystem::create_directory("results/facebook_combined/dim_" + to_string(emb_dims[i]) + embs_path);
-		std::__fs::filesystem::create_directory("results/facebook_combined/dim_" + to_string(emb_dims[i]) + result_path);
+		// std::__fs::filesystem::create_directory("results/facebook_combined/");
+		// std::__fs::filesystem::create_directory("results/facebook_combined/dim_" + to_string(emb_dims[i]));
+		// std::__fs::filesystem::create_directory("results/facebook_combined/dim_" + to_string(emb_dims[i]) + embs_path);
+		// std::__fs::filesystem::create_directory("results/facebook_combined/dim_" + to_string(emb_dims[i]) + result_path);
 
-		std::__fs::filesystem::create_directory("results/p2p_gnutella08/");
-		std::__fs::filesystem::create_directory("results/p2p_gnutella08/dim_" + to_string(emb_dims[i]));
-		std::__fs::filesystem::create_directory("results/p2p_gnutella08/dim_" + to_string(emb_dims[i]) + embs_path);
-		std::__fs::filesystem::create_directory("results/p2p_gnutella08/dim_" + to_string(emb_dims[i]) + result_path);
+		// std::__fs::filesystem::create_directory("results/p2p_gnutella08/");
+		// std::__fs::filesystem::create_directory("results/p2p_gnutella08/dim_" + to_string(emb_dims[i]));
+		// std::__fs::filesystem::create_directory("results/p2p_gnutella08/dim_" + to_string(emb_dims[i]) + embs_path);
+		// std::__fs::filesystem::create_directory("results/p2p_gnutella08/dim_" + to_string(emb_dims[i]) + result_path);
 
-		std::__fs::filesystem::create_directory("results/lastfm_asia/");
-		std::__fs::filesystem::create_directory("results/lastfm_asia/dim_" + to_string(emb_dims[i]));
-		std::__fs::filesystem::create_directory("results/lastfm_asia/dim_" + to_string(emb_dims[i]) + embs_path);
-		std::__fs::filesystem::create_directory("results/lastfm_asia/dim_" + to_string(emb_dims[i]) + result_path);
-
-
+		// std::__fs::filesystem::create_directory("results/lastfm_asia/");
+		// std::__fs::filesystem::create_directory("results/lastfm_asia/dim_" + to_string(emb_dims[i]));
+		// std::__fs::filesystem::create_directory("results/lastfm_asia/dim_" + to_string(emb_dims[i]) + embs_path);
+		// std::__fs::filesystem::create_directory("results/lastfm_asia/dim_" + to_string(emb_dims[i]) + result_path);
 
 		for (int y = 0; y < 10; y++)
 		{
@@ -169,32 +165,29 @@ int main()
 				0.01
 			);
 
-			DepDistContraction* facebook_combined_ddc = new DepDistContraction(
-				facebook_combined_network,
-				facebook_combined_dependency,
-				emb_dims[i],
-				0.002,
-				0.01
-			);
+			// DepDistContraction* facebook_combined_ddc = new DepDistContraction(
+			// 	facebook_combined_network,
+			// 	facebook_combined_dependency,
+			// 	emb_dims[i],
+			// 	0.002,
+			// 	0.01
+			// );
 
-			DepDistContraction* p2p_gnutella08_ddc = new DepDistContraction(
-				p2p_gnutella08_network,
-				p2p_gnutella08_dependency,
-				emb_dims[i],
-				0.002,
-				0.01
-			);
+			// DepDistContraction* p2p_gnutella08_ddc = new DepDistContraction(
+			// 	p2p_gnutella08_network,
+			// 	p2p_gnutella08_dependency,
+			// 	emb_dims[i],
+			// 	0.002,
+			// 	0.01
+			// );
 
-			DepDistContraction* lastfm_asia_ddc = new DepDistContraction(
-				lastfm_asia_network,
-				lastfm_asia_dependency,
-				emb_dims[i],
-				0.002,
-				0.01
-			);
-
-
-
+			// DepDistContraction* lastfm_asia_ddc = new DepDistContraction(
+			// 	lastfm_asia_network,
+			// 	lastfm_asia_dependency,
+			// 	emb_dims[i],
+			// 	0.002,
+			// 	0.01
+			// );
 
 			// mouse_ddc->run(500);
 			// airport_ddc->run(500);
@@ -203,10 +196,9 @@ int main()
 
 			ca_grqc_ddc->run(500);
 			ca_hepth_ddc->run(500);
-			facebook_combined_ddc->run(500);
-			p2p_gnutella08_ddc->run(500);
-			lastfm_asia_ddc->run(500);
-
+			// facebook_combined_ddc->run(500);
+			// p2p_gnutella08_ddc->run(500);
+			// lastfm_asia_ddc->run(500);
 
 			// mouse_ddc->run_automatic_stop();
 			// airport_ddc->run_automatic_stop();
@@ -220,10 +212,9 @@ int main()
 
 			ca_grqc_ddc->export_embs_for_CGE("results/ca_grqc/dim_" + to_string(emb_dims[i]) + embs_path + "/emb_" + to_string(y) + ".embs");
 			ca_hepth_ddc->export_embs_for_CGE("results/ca_hepth/dim_" + to_string(emb_dims[i]) + embs_path + "/emb_" + to_string(y) + ".embs");
-			facebook_combined_ddc->export_embs_for_CGE("results/facebook_combined/dim_" + to_string(emb_dims[i]) + embs_path + "/emb_" + to_string(y) + ".embs");
-			p2p_gnutella08_ddc->export_embs_for_CGE("results/p2p_gnutella08/dim_" + to_string(emb_dims[i]) + embs_path + "/emb_" + to_string(y) + ".embs");
-			lastfm_asia_ddc->export_embs_for_CGE("results/lastfm_asia/dim_" + to_string(emb_dims[i]) + embs_path + "/emb_" + to_string(y) + ".embs");
-
+			// facebook_combined_ddc->export_embs_for_CGE("results/facebook_combined/dim_" + to_string(emb_dims[i]) + embs_path + "/emb_" + to_string(y) + ".embs");
+			// p2p_gnutella08_ddc->export_embs_for_CGE("results/p2p_gnutella08/dim_" + to_string(emb_dims[i]) + embs_path + "/emb_" + to_string(y) + ".embs");
+			// lastfm_asia_ddc->export_embs_for_CGE("results/lastfm_asia/dim_" + to_string(emb_dims[i]) + embs_path + "/emb_" + to_string(y) + ".embs");
 
 			// delete mouse_ddc;
 			// delete airport_ddc;
@@ -232,10 +223,9 @@ int main()
 
 			delete ca_grqc_ddc;
 			delete ca_hepth_ddc;
-			delete facebook_combined_ddc;
-			delete p2p_gnutella08_ddc;
-			delete lastfm_asia_ddc;
-
+			// delete facebook_combined_ddc;
+			// delete p2p_gnutella08_ddc;
+			// delete lastfm_asia_ddc;
 		}
 	}
 }
